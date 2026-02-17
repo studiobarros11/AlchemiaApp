@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -7,30 +6,30 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#2d1b14">
-    <title>Alchemia - Suplemento Oficial</title>
+    <title>Alchemia - Codex de Reação</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        background: radial-gradient(circle at center, #5c3d2e 0%, #2d1b14 100%);
+        background: radial-gradient(circle at center, #3d2519 0%, #1a0f0a 100%);
         color: #f3e5ab;
         min-height: 100vh;
         margin: 0;
-        overflow-x: hidden;
+        overflow: hidden;
         -webkit-tap-highlight-color: transparent;
       }
-      .font-alchemy {
-        font-family: 'Cinzel', serif;
-      }
-      @keyframes shake {
-        0%, 100% { transform: rotate(0deg) scale(1); }
-        25% { transform: rotate(10deg) scale(1.1); }
-        50% { transform: rotate(-10deg) scale(1.1); }
-        75% { transform: rotate(10deg) scale(1.1); }
+      .font-alchemy { font-family: 'Cinzel', serif; }
+      
+      @keyframes dice-shake {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(5px, -5px) rotate(15deg) scale(1.1); }
+        50% { transform: translate(-5px, 5px) rotate(-15deg) scale(1.1); }
+        75% { transform: translate(5px, 5px) rotate(10deg) scale(1.1); }
+        100% { transform: translate(0, 0) rotate(0deg); }
       }
       .animate-dice-roll {
-        animation: shake 0.2s ease-in-out infinite;
+        animation: dice-shake 0.15s ease-in-out infinite;
       }
       .mist {
         position: fixed;
@@ -57,21 +56,8 @@
 <link rel="stylesheet" href="/index.css">
 </head>
   <body>
-    <noscript>
-      <div style="padding: 20px; text-align: center; color: #f3e5ab; font-family: 'Cinzel', serif;">
-        <h1>Erro de Alquimia</h1>
-        <p>Você precisa ativar o JavaScript para transmutar este Codex.</p>
-      </div>
-    </noscript>
     <div class="mist"></div>
-    <div id="root">
-      <div id="loading-fallback" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; padding: 20px;">
-        <h2 class="font-alchemy" style="color: #fbbf24; margin-bottom: 10px;">Iniciando Laboratório...</h2>
-        <p style="color: #f3e5ab; opacity: 0.5; font-size: 12px; max-width: 300px;">
-          Se esta tela não desaparecer em instantes, certifique-se de que está rodando o projeto via servidor e não abrindo o arquivo diretamente.
-        </p>
-      </div>
-    </div>
+    <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
