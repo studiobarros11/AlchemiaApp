@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2d1b14">
+    <title>Alchemia - Suplemento Oficial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background: radial-gradient(circle at center, #5c3d2e 0%, #2d1b14 100%);
+        color: #f3e5ab;
+        min-height: 100vh;
+        margin: 0;
+        overflow-x: hidden;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .font-alchemy {
+        font-family: 'Cinzel', serif;
+      }
+      @keyframes shake {
+        0%, 100% { transform: rotate(0deg) scale(1); }
+        25% { transform: rotate(10deg) scale(1.1); }
+        50% { transform: rotate(-10deg) scale(1.1); }
+        75% { transform: rotate(10deg) scale(1.1); }
+      }
+      .animate-dice-roll {
+        animation: shake 0.2s ease-in-out infinite;
+      }
+      .mist {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
+        opacity: 0.05;
+        pointer-events: none;
+        z-index: 100;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.574.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <noscript>
+      <div style="padding: 20px; text-align: center; color: #f3e5ab; font-family: 'Cinzel', serif;">
+        <h1>Erro de Alquimia</h1>
+        <p>Você precisa ativar o JavaScript para transmutar este Codex.</p>
+      </div>
+    </noscript>
+    <div class="mist"></div>
+    <div id="root">
+      <div id="loading-fallback" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; padding: 20px;">
+        <h2 class="font-alchemy" style="color: #fbbf24; margin-bottom: 10px;">Iniciando Laboratório...</h2>
+        <p style="color: #f3e5ab; opacity: 0.5; font-size: 12px; max-width: 300px;">
+          Se esta tela não desaparecer em instantes, certifique-se de que está rodando o projeto via servidor e não abrindo o arquivo diretamente.
+        </p>
+      </div>
+    </div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
