@@ -52,22 +52,23 @@ const App: React.FC = () => {
       if (d3 !== null) finalValues.push(d3);
 
       let total = 0;
-      let discarded: number | null = null;
 
       if (mode === 'catalyst' && d3 !== null) {
         const sorted = [...finalValues].sort((a, b) => b - a);
         total = sorted[0] + sorted[1];
-        discarded = sorted[2];
         const minVal = Math.min(...finalValues);
-        setDiscardedIndex(finalValues.indexOf(minVal));
+        // Encontrar índice do menor para descartar visualmente
+        const idx = finalValues.indexOf(minVal);
+        setDiscardedIndex(idx);
         setDiceValues(finalValues.slice(0, 2));
         setExtraDice(d3);
       } else if (mode === 'inhibitor' && d3 !== null) {
         const sorted = [...finalValues].sort((a, b) => a - b);
         total = sorted[0] + sorted[1];
-        discarded = sorted[2];
         const maxVal = Math.max(...finalValues);
-        setDiscardedIndex(finalValues.indexOf(maxVal));
+        // Encontrar índice do maior para descartar visualmente
+        const idx = finalValues.indexOf(maxVal);
+        setDiscardedIndex(idx);
         setDiceValues(finalValues.slice(0, 2));
         setExtraDice(d3);
       } else if (mode === 'damage') {
@@ -82,8 +83,8 @@ const App: React.FC = () => {
       setHistory(prev => [total, ...prev].slice(0, 5));
 
       setIsLoadingCommentary(true);
-      // Para o modo dano, passamos d2 como 0
-      const aiResponse = await getRollCommentary(d1, d2, mode, discarded || undefined);
+      // Enviamos apenas o TOTAL final que o usuário vê
+      const aiResponse = await getRollCommentary(total, mode);
       setCommentary(aiResponse);
       setIsLoadingCommentary(false);
     }, 1200);
@@ -182,7 +183,6 @@ const App: React.FC = () => {
               <Dice value={diceValues[0]} isRolling={isRolling} />
             </div>
             
-            {/* O segundo dado só aparece se não estivermos no modo Dano */}
             {mode !== 'damage' && diceValues[1] !== undefined && (
               <div className={`transition-all duration-500 ${discardedIndex === 1 ? 'opacity-20 grayscale scale-75' : ''}`}>
                 <Dice value={diceValues[1]} isRolling={isRolling} />

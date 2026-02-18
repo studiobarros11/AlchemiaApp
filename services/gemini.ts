@@ -2,34 +2,43 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { GeminiCommentary } from "../types";
 
 export const getRollCommentary = async (
-  d1: number, 
-  d2: number, 
-  mode: 'standard' | 'catalyst' | 'inhibitor' | 'damage',
-  discarded?: number
+  totalValue: number,
+  mode: 'standard' | 'catalyst' | 'inhibitor' | 'damage'
 ): Promise<GeminiCommentary> => {
-  const isDamage = mode === 'damage';
-  const finalValue = isDamage ? d1 : d1 + d2;
-
+  
+  // Inicialização obrigatória dentro da função para garantir o uso da chave atualizada
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-  const modeDescriptions = {
-    standard: "uma reação padrão (2d6)",
-    catalyst: "uma reação catalisada (vantagem, rola 3d6 e descarta o menor)",
-    inhibitor: "uma reação inibida (desvantagem, rola 3d6 e descarta o maior)",
-    damage: "uma liberação de energia destrutiva (dano de arma, rola apenas 1d6)"
+  const modeNames = {
+    standard: "Reação Padrão",
+    catalyst: "Reação com Catalisador",
+    inhibitor: "Reação Inibida",
+    damage: "Impacto de Dano"
   };
 
-  const systemInstruction = `Você é o Grão-Alquimista Meridius. Seu tom é místico e acadêmico.
-  REGRAS DE REAÇÃO (2d6): 12 é Sucesso Perfeito ("Gás Nobre"), 2 é Falha Crítica ("Entropia").
-  REGRAS DE DANO (1d6): 6 é um impacto violento, 1 é um ferimento superficial.
-  Sua tarefa: Comentar o resultado do dado (máximo 12 palavras). 
-  Contexto: O aprendiz realizou ${modeDescriptions[mode]}.
-  Use termos como: "Valência", "Exotérmica", "Transmutação", "Éter", "Equilíbrio", "Cinética".`;
+  const systemInstruction = `Você é o Grão-Alquimista Meridius. Seu tom é místico, sábio e encorajador.
+  Você está observando um aprendiz em um laboratório de alquimia.
+  
+  CRITÉRIOS DE SOMA (2d6):
+  - 12: Perfeição absoluta, Gás Nobre.
+  - 10-11: Sucesso brilhante.
+  - 7-9: Sucesso com custo, reação instável.
+  - 3-6: Fracasso, fumaça negra.
+  - 2: Catástrofe, explosão no caldeirão.
+
+  CRITÉRIOS DE DANO (1d6):
+  - 6: Destruição total.
+  - 1: Apenas um arranhão.
+
+  REGRA DE RESPOSTA:
+  - Máximo 12 palavras.
+  - Use termos como: Éter, Valência, Transmutação, Fulgor, Calclinação.
+  - Retorne APENAS JSON puro. Não use blocos de código markdown.`;
 
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `O aprendiz obteve o valor final ${finalValue} em ${modeDescriptions[mode]}. Comente como Meridius sobre este resultado específico.`,
+      contents: `O aprendiz obteve o resultado final ${totalValue} em uma ${modeNames[mode]}. Comente brevemente.`,
       config: {
         systemInstruction,
         responseMimeType: "application/json",
@@ -37,26 +46,29 @@ export const getRollCommentary = async (
           type: Type.OBJECT,
           properties: {
             text: { type: Type.STRING },
-            sentiment: { 
-              type: Type.STRING, 
-              enum: ['lucky', 'unlucky', 'neutral', 'amazing'] 
-            }
+            sentiment: { type: Type.STRING, enum: ['lucky', 'unlucky', 'neutral', 'amazing'] }
           },
           required: ["text", "sentiment"]
         }
       }
     });
 
-    const responseText = response.text;
-    if (!responseText) {
-      throw new Error("Resposta vazia da IA");
-    }
+    const jsonText = response.text.replace(/```json/g, "").replace(/```/g, "").trim();
+    return JSON.parse(jsonText) as GeminiCommentary;
 
-    return JSON.parse(responseText.trim()) as GeminiCommentary;
   } catch (error) {
-    console.error("Erro na alquimia:", error);
+    console.error("Erro Alquímico:", error);
+    
+    // Novas frases de fallback para identificar se o código atualizou
+    const fallbackMsgs = [
+      `O Éter vibra na frequência ${totalValue}. Prossiga, aprendiz.`,
+      `Interpreto o valor ${totalValue} como um sinal de mudança iminente.`,
+      `A transmutação de nível ${totalValue} foi registrada no Codex.`,
+      `Sinto uma oscilação de ${totalValue} nas correntes de energia.`
+    ];
+
     return {
-      text: `A energia de ${finalValue} flui pelo seu foco. Prossiga com a transmutação.`,
+      text: fallbackMsgs[Math.floor(Math.random() * fallbackMsgs.length)],
       sentiment: 'neutral'
     };
   }
