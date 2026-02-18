@@ -31,14 +31,14 @@ export const getRollCommentary = async (
   - 1: Apenas um arranhão.
 
   REGRA DE RESPOSTA:
-  - Máximo 12 palavras.
-  - Use termos como: Éter, Valência, Transmutação, Fulgor, Calclinação.
+  - Máximo 12 palavras. Seja criativo e nunca repita a mesma frase técnica.
+  - Use termos como: Éter, Valência, Transmutação, Fulgor, Calclinação, Isótopo, Destilação.
   - Retorne APENAS JSON puro. Não use blocos de código markdown.`;
 
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `O aprendiz obteve o resultado final ${totalValue} em uma ${modeNames[mode]}. Comente brevemente.`,
+      contents: `O aprendiz obteve o resultado final ${totalValue} em uma ${modeNames[mode]}. Comente este destino de forma única.`,
       config: {
         systemInstruction,
         responseMimeType: "application/json",
@@ -53,18 +53,24 @@ export const getRollCommentary = async (
       }
     });
 
-    const jsonText = response.text.replace(/```json/g, "").replace(/```/g, "").trim();
+    // Correção do erro TS18048: Verificamos se response.text existe antes de processar
+    const rawText = response.text || "";
+    const jsonText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+    
+    if (!jsonText) throw new Error("Resposta vazia da IA");
+
     return JSON.parse(jsonText) as GeminiCommentary;
 
   } catch (error) {
     console.error("Erro Alquímico:", error);
     
-    // Novas frases de fallback para identificar se o código atualizou
+    // Fallbacks variados para garantir que o Meridius sempre diga algo interessante mesmo em erro
     const fallbackMsgs = [
-      `O Éter vibra na frequência ${totalValue}. Prossiga, aprendiz.`,
-      `Interpreto o valor ${totalValue} como um sinal de mudança iminente.`,
-      `A transmutação de nível ${totalValue} foi registrada no Codex.`,
-      `Sinto uma oscilação de ${totalValue} nas correntes de energia.`
+      `O Éter vibra na frequência ${totalValue}. Prossiga com sua transmutação, aprendiz.`,
+      `Vejo o brilho de ${totalValue} no fundo do seu caldeirão. O que isso significa?`,
+      `A magnitude ${totalValue} ecoa pelos corredores da Ordem. Interessante...`,
+      `Uma reação de nível ${totalValue}. O Codex aguarda seus próximos passos.`,
+      `Sinto uma oscilação de ${totalValue} no fluxo elemental. Mantenha o foco.`
     ];
 
     return {
